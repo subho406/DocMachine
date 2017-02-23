@@ -1,0 +1,9 @@
+{
+	"mysql": {
+		"URL" : "sp-do-blr1-1.li8.in",
+		"PORT" : "3306",
+		"DATABASE" : "db",
+		"USER" : "dbaccess",
+		"PASSWORD" : "dbacc3ss"
+	}
+}
