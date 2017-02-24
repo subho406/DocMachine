@@ -1,30 +1,38 @@
 import os
-from flask import Flask, jsonify
+import pickle as pk
 
-app = Flask(__name__)
+# Web App libraries
+from flask import Flask, jsonify, request
+
+# Machine Learning Libraries
+import pandas as pd
+import numpy as np
+
+from libs.extract import *
+
+TRAINLIMIT 300
+
+app = Flask(__name__, static_url_path='')
 
 @app.route('/')
 def Welcome():
     return app.send_static_file('index.html')
 
-@app.route('/myapp')
-def WelcomeToMyapp():
-    return 'Welcome again to my app running on Bluemix!'
+@app.route('/api/post', methods=['POST'])
+def Post():
+    raw = request.json
+    StoreData(raw)
+    return str(df.to_html())
 
-@app.route('/api/people')
-def GetPeople():
-    list = [
-        {'name': 'John', 'age': 28},
-        {'name': 'Bill', 'val': 26}
-    ]
-    return jsonify(results=list)
-
-@app.route('/api/people/<name>')
-def SayHello(name):
-    message = {
-        'message': 'Hello ' + name
-    }
-    return jsonify(results=message)
+def StoreData(rawdata):
+    global data
+    # Store Data till Train Limit
+    if(data.shape[0]<=TRAINLIMIT):
+        # Converting to dataframe
+        df = dict_to_dataframe(rawdata)
+        data = data.append(df, ignore_index=True)
+        # Pickling the dataframe
+        data.to_pickle('static/data/data.pkl')
 
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
