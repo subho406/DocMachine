@@ -10,7 +10,7 @@ import numpy as np
 
 from libs.extract import *
 
-TRAINLIMIT 300
+TRAINLIMIT = 30
 
 app = Flask(__name__, static_url_path='')
 
@@ -21,17 +21,39 @@ def Welcome():
 @app.route('/api/post', methods=['POST'])
 def Post():
     raw = request.json
-    StoreData(raw)
+
+    # Converting to dataframe
+    df = dict_to_dataframe(raw)
+
+    # Storing Data frame for Training
+    try:
+        StoreData(df)
+    except(e):
+        return (e)
+
     return str(df.to_html())
 
-def StoreData(rawdata):
-    global data
-    # Store Data till Train Limit
-    if(data.shape[0]<=TRAINLIMIT):
-        # Converting to dataframe
-        df = dict_to_dataframe(rawdata)
-        data = data.append(df, ignore_index=True)
-        # Pickling the dataframe
+def StoreData(newdata):
+    # Check if storage exists
+    if(os.path.isfile('static/data/data.pkl')):
+        olddata = pd.read_pickle('static/data/data.pkl')
+        # Store Data till Train Limit
+        if(olddata.shape[0] < TRAINLIMIT):
+            olddata = olddata.append(newdata, ignore_index=True)
+            # Pickling the dataframe
+            olddata.to_pickle('static/data/data.pkl')
+        else:
+            print('Limit Reached')
+    
+    else:
+        # Defining a new data frame
+        dffloatcols=['motor_temp','load','cabin_speed','inner_motor_temp','motor_vibration','current']  
+        dfcatcolsraw=['state','direction']
+        dfcatcols=['state_moving','state_loading','state_idle','state_stopped','direction_1','direction_0','direction_-1']      
+        data=pd.DataFrame(None,None,columns=dffloatcols+dfcatcols)
+
+        # Append and store
+        data = data.append(newdata)
         data.to_pickle('static/data/data.pkl')
 
 port = os.getenv('PORT', '5000')
