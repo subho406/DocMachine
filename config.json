@@ -5,5 +5,17 @@
 		"DATABASE" : "db",
 		"USER" : "dbaccess",
 		"PASSWORD" : "dbacc3ss"
-	}
+	},
+	"Realtimecols": ["id",
+					"motor_temp",
+					"direction",
+					"load",
+					"floor",
+					"cabin_speed",
+					"inner_motor_temp",
+					"cabin_temp",
+					"state",
+					"motor_vibration",
+					"current",
+					"timestamp"]
 }
