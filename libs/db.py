@@ -44,5 +44,9 @@ def insert_realtime_data(db,row):
 
 #Get realtime data before seconds
 #
-def get_realtime_data(db,seconds)
+#
+def get_realtime_data(db,seconds):
+	timestamp = datetime.datetime.today()-datetime.timedelta(seconds=seconds)
+	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)
+
 #Database connection 

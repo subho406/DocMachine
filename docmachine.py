@@ -10,7 +10,7 @@ import numpy as np
 
 from libs.extract import *
 
-TRAINLIMIT = 30
+TRAINLIMIT = 1000000
 
 app = Flask(__name__, static_url_path='')
 
@@ -26,25 +26,19 @@ def Post():
     df = dict_to_dataframe(raw)
 
     # Storing Data frame for Training
-    try:
-        StoreData(df)
-    except(e):
-        return (e)
+    StoreData(df)
 
     return str(df.to_html())
 
 def StoreData(newdata):
     # Check if storage exists
-    if(os.path.isfile('static/data/data.pkl')):
-        olddata = pd.read_pickle('static/data/data.pkl')
-        # Store Data till Train Limit
-        if(olddata.shape[0] < TRAINLIMIT):
-            olddata = olddata.append(newdata, ignore_index=True)
-            # Pickling the dataframe
-            olddata.to_pickle('static/data/data.pkl')
+    if(os.path.isfile('static/data/data.csv')):
+        if(os.stat('static/data/data.csv').st_size<TRAINLIMIT):
+            with open('static/data/data.csv', 'a') as f:
+                newdata.to_csv(f, header=False)
         else:
-            print('Limit Reached')
-    
+            with open('static/data/data.csv', 'w') as f:
+                newdata.to_csv(f, header=False)
     else:
         # Defining a new data frame
         dffloatcols=['motor_temp','load','cabin_speed','inner_motor_temp','motor_vibration','current']  
@@ -54,8 +48,8 @@ def StoreData(newdata):
 
         # Append and store
         data = data.append(newdata)
-        data.to_pickle('static/data/data.pkl')
+        data.to_csv('static/data/data.csv')
 
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
-	app.run(host='0.0.0.0', port=int(port))
+    app.run(host='0.0.0.0', port=int(port))
