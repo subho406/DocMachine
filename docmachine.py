@@ -8,11 +8,13 @@ from flask import Flask, jsonify, request
 import pandas as pd
 import numpy as np
 
-from libs.extract import *
+from libs import extract
+from libs import db
 
 TRAINLIMIT = 1000000
 
 app = Flask(__name__, static_url_path='')
+
 
 @app.route('/')
 def Welcome():
@@ -20,10 +22,14 @@ def Welcome():
 
 @app.route('/api/post', methods=['POST'])
 def Post():
+    global sql
+    sql = db.dbconnect()
+
     raw = request.json
+    db.insert_realtime_data(sql, raw)
 
     # Converting to dataframe
-    df = dict_to_dataframe(raw)
+    df = extract.dict_to_dataframe(raw)
 
     # Storing Data frame for Training
     StoreData(df)
@@ -35,10 +41,8 @@ def StoreData(newdata):
     if(os.path.isfile('static/data/data.csv')):
         if(os.stat('static/data/data.csv').st_size<TRAINLIMIT):
             with open('static/data/data.csv', 'a') as f:
-                newdata.to_csv(f, header=False)
-        else:
-            with open('static/data/data.csv', 'w') as f:
-                newdata.to_csv(f, header=False)
+                newdata.to_csv(f, header=False, index=False)
+        
     else:
         # Defining a new data frame
         dffloatcols=['motor_temp','load','cabin_speed','inner_motor_temp','motor_vibration','current']  
@@ -48,7 +52,7 @@ def StoreData(newdata):
 
         # Append and store
         data = data.append(newdata)
-        data.to_csv('static/data/data.csv')
+        data.to_csv('static/data/data.csv',index=False)
 
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ import pymysql
 import json
 import datetime
 
+
 config_file='config.json'
 
 #Database connection functions

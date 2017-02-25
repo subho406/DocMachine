@@ -1,0 +1,2 @@
+motor_temp,load,cabin_speed,inner_motor_temp,motor_vibration,current,state_moving,state_loading,state_idle,state_stopped,direction_1,direction_0,direction_-1
+5.017279836814924,5.860786223465865,0.0,5.703782474656201,0.0,1.0986122886681096,0,0,1,0,0,1,0
