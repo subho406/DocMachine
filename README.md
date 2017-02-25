@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # DocMachine
 Flask web app serving machine health monitoring API using anomaly detection algorithms
 =======
@@ -19,4 +18,3 @@ eye-catching graphic.
 
 Finally, consider defining some sprints and work items in Track & Plan to give 
 interested developers a sense of your cadence and upcoming enhancements.
->>>>>>> a59549364127cb08b22fb60146230d58949be35b
