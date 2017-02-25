@@ -17,5 +17,8 @@
 					"state",
 					"motor_vibration",
 					"current",
-					"timestamp"]
+					"timestamp",
+					"anamoly",
+					"score"
+					]
 }
