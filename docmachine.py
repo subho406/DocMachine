@@ -30,9 +30,12 @@ def Post():
     # Storing Data frame for Training
     StoreData(df)
     data=raw['id']
-    data=db.get_realtime_data(sql,10000)
+    #data=db.get_realtime_data(sql,600)
     return str(data)
-
+@app.route('/api/delmodel', methods=['GET'])
+def Delete():
+    os.remove("static/data/data.csv")
+    return 'Removed Bitch!'
 def StoreData(newdata):
     # Check if storage exists
     if(os.path.isfile('static/data/data.csv')):

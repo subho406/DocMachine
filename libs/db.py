@@ -29,8 +29,8 @@ def dbconnect():
 #
 
 def insert_realtime_data(db,row):
-	timestamp = datetime.datetime.today()
-	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)
+	timestamp = datetime.datetime.now()
+	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)+' +00:00'
 	row['timestamp']=timestamp
 	cur = db.cursor()
 	with open(config_file) as data_file:    
@@ -40,6 +40,7 @@ def insert_realtime_data(db,row):
 	for col in columns:
 		query=query+'"'+str(row[col])+'",'
 	query=query[:(len(query)-1)]+')'
+	print(query)
 	cur.execute(query)
 	db.commit()
 
@@ -49,9 +50,11 @@ def insert_realtime_data(db,row):
 #Input: db, seconds
 #output: Array of dicts containing the rows
 def get_realtime_data(db,seconds):
-	timestamp = datetime.datetime.today()-datetime.timedelta(seconds=seconds)
-	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)
+	timestamp = datetime.datetime.now()-datetime.timedelta(seconds=seconds)
+	print(timestamp)
+	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)+' +00:00'
 	query='SELECT * from Realtime where timestamp>"%s";'%(timestamp)
+	print(query)
 	cur=db.cursor()
 	cur.execute(query)
 	temp=cur.fetchall()
