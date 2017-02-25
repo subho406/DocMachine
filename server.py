@@ -26,7 +26,7 @@ app = Flask(__name__,static_url_path='')
 
 # On Bluemix, get the port number from the environment variable PORT
 # When running this app on the local machine, default the port to 8080
-port = int(os.getenv('PORT', 8080))
+port = int(os.getenv('PORT',5000 ))
 
 
 #Library functions start
@@ -68,16 +68,18 @@ def dict_to_dataframe(req,dffloatcols,dfcatcols,dfcatcolsraw):
 	df=normalise(df,dffloatcols)
 	return df
 
-@app.route('/', methods = ['GET','POST'])
+@app.route('/', methods = ['POST'])
 def server():
 	req=request.json
 	global sql
-	db.insert_realtime_data(sql,req)
-	return 'Hello'
+	data=db.get_realtime_data(sql,100000)
+	return data
 
 
 if __name__ == '__main__':
 	global sql
 	sql=db.dbconnect()
 	app.run(host='0.0.0.0', port=port, debug=True)
+
+
 	

@@ -23,18 +23,15 @@ def Welcome():
 @app.route('/api/post', methods=['POST'])
 def Post():
     global sql
-    sql = db.dbconnect()
-
     raw = request.json
     db.insert_realtime_data(sql, raw)
-
     # Converting to dataframe
     df = extract.dict_to_dataframe(raw)
-
     # Storing Data frame for Training
     StoreData(df)
-
-    return str(df.to_html())
+    data=raw['id']
+    data=db.get_realtime_data(sql,10000)
+    return str(data)
 
 def StoreData(newdata):
     # Check if storage exists
@@ -56,4 +53,6 @@ def StoreData(newdata):
 
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
+    global sql
+    sql = db.dbconnect()
     app.run(host='0.0.0.0', port=int(port))

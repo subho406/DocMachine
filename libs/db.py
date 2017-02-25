@@ -51,11 +51,11 @@ def insert_realtime_data(db,row):
 def get_realtime_data(db,seconds):
 	timestamp = datetime.datetime.today()-datetime.timedelta(seconds=seconds)
 	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)
-	query='SELECT * from Realtime where timestamp>%s;'%(timestamp)
+	query='SELECT * from Realtime where timestamp>"%s";'%(timestamp)
 	cur=db.cursor()
 	cur.execute(query)
 	temp=cur.fetchall()
-		with open(config_file) as data_file:    
+	with open(config_file) as data_file:    
 		data = json.load(data_file)
 	columns=data['Realtimecols']
 	results=[]
