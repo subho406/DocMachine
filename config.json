@@ -18,7 +18,11 @@
 					"motor_vibration",
 					"current",
 					"timestamp",
+<<<<<<< HEAD
 					"anamoly",
+=======
+					"anomaly",
+>>>>>>> 0a28a937e44370d18ba296214ecdd81e432665d0
 					"score"
 					]
 }
