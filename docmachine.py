@@ -12,6 +12,18 @@ from libs import extract
 from libs import db
 
 TRAINLIMIT = 1000000
+DETECTINTERVAL = 100
+DATACOUNTS={'Elevator00':0,
+            'Elevator01':0,
+            'Elevator02':0,
+            'Elevator03':0,
+            'Elevator04':0,
+            'Elevator05':0,
+            'Elevator06':0,
+            'Elevator07':0,
+            'Elevator08':0,
+            'Elevator09':0,
+            'Elevator10':0}
 
 app = Flask(__name__, static_url_path='')
 
@@ -22,18 +34,42 @@ def Welcome():
 
 @app.route('/api/post', methods=['POST'])
 def Post():
+    # Connect to database
     global sql
     sql = db.dbconnect()
 
+    # load the model from disk
+    clf = pk.load(open('lab/clf.pkl', 'rb'))
+
+    # Processing the request
     raw = request.json
-    db.insert_realtime_data(sql, raw)
+
     # Converting to dataframe
     df = extract.dict_to_dataframe(raw)
     # Storing Data frame for Training
     StoreData(df)
-    data=raw['id']
-    # data=db.get_realtime_data(sql,10000)
-    return str('ack')
+    
+    # Detecting Anomaly
+    anomaly = clf.predict(df)
+    score = float(clf.decision_function(df))
+    raw['anomaly'] = int(anomaly)
+    raw['score'] = score
+
+    # Insert into real time table
+    db.insert_realtime_data(sql, raw)
+
+    eID=raw['id']
+    DATACOUNTS[eID] += 1
+
+    # Checking at intervals
+    is_checking = Detect(DETECTINTERVAL, sql)
+
+    return str(eID)+str(is_checking)
+
+@app.route('/api/delmodel', methods=['GET'])
+def Delete():
+    os.remove("static/data/data.csv")
+    return 'Removed Bitch!'
 
 def StoreData(newdata):
     # Check if storage exists
@@ -52,6 +88,17 @@ def StoreData(newdata):
         # Append and store
         data = data.append(newdata)
         data.to_csv('static/data/data.csv',index=False)
+
+def Detect(interval, sql):
+    for key, value in DATACOUNTS.iteritems():
+        if (value>=interval):
+            value = 0
+            # Push anomaly into database
+            return True
+        
+        else:
+            return False
+
 
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
