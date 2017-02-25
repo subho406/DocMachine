@@ -24,7 +24,7 @@ def Welcome():
 def Post():
     global sql
     sql = db.dbconnect()
-    
+
     raw = request.json
     db.insert_realtime_data(sql, raw)
     # Converting to dataframe
@@ -32,8 +32,8 @@ def Post():
     # Storing Data frame for Training
     StoreData(df)
     data=raw['id']
-    data=db.get_realtime_data(sql,10000)
-    return str(data)
+    # data=db.get_realtime_data(sql,10000)
+    return str('ack')
 
 def StoreData(newdata):
     # Check if storage exists
