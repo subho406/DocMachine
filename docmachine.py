@@ -23,6 +23,8 @@ def Welcome():
 @app.route('/api/post', methods=['POST'])
 def Post():
     global sql
+    sql = db.dbconnect()
+    
     raw = request.json
     db.insert_realtime_data(sql, raw)
     # Converting to dataframe
