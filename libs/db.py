@@ -43,11 +43,28 @@ def insert_realtime_data(db,row):
 	cur.execute(query)
 	db.commit()
 
+
 #Get realtime data before seconds
 #
-#
+#Input: db, seconds
+#output: Array of dicts containing the rows
 def get_realtime_data(db,seconds):
 	timestamp = datetime.datetime.today()-datetime.timedelta(seconds=seconds)
 	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)
+	query='SELECT * from Realtime where timestamp>%s;'%(timestamp)
+	cur=db.cursor()
+	cur.execute(query)
+	temp=cur.fetchall()
+		with open(config_file) as data_file:    
+		data = json.load(data_file)
+	columns=data['Realtimecols']
+	results=[]
+	rowcount=-1
+	for row in temp:
+		rowcount=rowcount+1
+		results.append(dict())
+		for i in range(0,len(columns)):
+			results[rowcount][columns[i]]=row[i]
+	return results
 
 #Database connection 
