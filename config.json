@@ -20,5 +20,15 @@
 					"timestamp",
 					"anomaly",
 					"score"
+					],
+	"Anomalycols":[
+					"elevator_id",
+					"score",
+					"hist",
+					"heatmap",
+					"matrix",
+					"summary",
+					"time",
+					"solved"
 					]
 }
