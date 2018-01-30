@@ -43,18 +43,31 @@ def insert_realtime_data(db,row):
 	print(query)
 	cur.execute(query)
 	db.commit()
-
-
+#Insert data to the Anomaly database
+# 
+#Input: (db: db, row: dict)
+#
+def insert_anomaly_data(db,row):
+	timestamp = datetime.datetime.now()
+	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)+' +00:00'
+	row['time']=timestamp
+	cur = db.cursor()
+	with open(config_file) as data_file:    
+		data = json.load(data_file)
+	columns=data['Anomalycols']
+	query = 'INSERT INTO Anomaly (elevator_id, score, hist, heatmap, matrix, summary, time, solved ) VALUES ('
+	for col in columns:
+		query=query+'"'+str(row[col])+'",'
+	query=query[:(len(query)-1)]+')'
+	print(query)
+	cur.execute(query)
+	db.commit()	
 #Get realtime data before seconds
 #
-#Input: db, seconds
+#Input: db, id: ID of Elevator, last: number of records to fetch from tail
 #output: Array of dicts containing the rows
-def get_realtime_data(db,seconds):
-	timestamp = datetime.datetime.now()-datetime.timedelta(seconds=seconds)
-	print(timestamp)
-	timestamp=str(timestamp.year)+'-'+str(timestamp.month)+'-'+str(timestamp.day)+' '+str(timestamp.hour)+':'+str(timestamp.minute)+':'+str(timestamp.second)+' +00:00'
-	query='SELECT * from Realtime where timestamp>"%s";'%(timestamp)
-	print(query)
+def get_realtime_data(db,id,last):
+	query='SELECT * from Realtime where id="%s" order by timestamp desc limit %d;'%(id,last)
 	cur=db.cursor()
 	cur.execute(query)
 	temp=cur.fetchall()
