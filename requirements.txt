@@ -1,4 +1,10 @@
 Flask==0.10.1
+scipy
 numpy
 pandas
 pymysql
+sklearn
+matplotlib==1.4.3
+pysftp
+seaborn
+requests
